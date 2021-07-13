@@ -80,6 +80,12 @@ AlurakutMenu.Wrapper = styled.header`
     > div {
       max-width: 400px;
       margin: auto;
+      text-align: center;
+    }
+    img.profileImage {
+      margin: 0 auto;
+      width: 200px;
+      border-radius: 8px;
     }
     a {
       font-size: 18px;
@@ -107,10 +113,12 @@ AlurakutMenu.Wrapper = styled.header`
     margin: auto;
     display: flex;
     justify-content: space-between;
-    position: relative;
+    position: fixed;
     z-index: 101;
+    width: 100%;
     @media (min-width: 860px) {
       justify-content: flex-start;
+      position: relative;
     }
 
     button {
@@ -177,12 +185,12 @@ function AlurakutMenuProfileSidebar({ githubUser }) {
     <div className="alurakutMenuProfileSidebar">
       <div>
         <img
+          className="profileImage"
           src={`https://github.com/${githubUser}.png`}
-          style={{ borderRadius: "8px" }}
         />
         <hr />
         <p>
-          <a className="boxLink" href={`/user/${githubUser}`}>
+          <a className="boxLink" href={`https://github.com/${githubUser}`}>
             @{githubUser}
           </a>
         </p>
