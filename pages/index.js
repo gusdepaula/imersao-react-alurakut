@@ -36,9 +36,21 @@ export default function Home() {
   const usuarioAleatorio = "gusdepaula";
   const [comunidades, setComunidades] = React.useState([
     {
-      id: "12802378123789378912789789123896123",
+      id: "d8043eb624c0414fb4384ebc0cd9c07e",
       title: "Eu odeio acordar cedo",
       image: "https://alurakut.vercel.app/capa-comunidade-01.jpg",
+    },
+    {
+      id: "398082ebb2634700a45ec8870ff946b9",
+      title: "Odeio esperar resposta no MSN",
+      image:
+        "https://img10.orkut.br.com/community/9197344aa3f8d682ece581e1146bec4a.jpg",
+    },
+    {
+      id: "6f9ac2b5451a45e888ef394d3486fbbb",
+      title: "Pareço metida(o) mas sou legal",
+      image:
+        "https://img10.orkut.br.com/community/43bf264aab209e4950ebf201789ed177.jpg",
     },
   ]);
   // const comunidades = comunidades[0];
