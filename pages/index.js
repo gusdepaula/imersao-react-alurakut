@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import MainGrid from "../src/components/MainGrid";
 import Box from "../src/components/Box";
 import {
@@ -7,6 +7,8 @@ import {
   OrkutNostalgicIconSet,
 } from "../src/lib/AlurakutCommons";
 import { ProfileRelationsBoxWrapper } from "../src/components/ProfileRelations";
+
+const URL_GITHUBAPI = `https://api.github.com`;
 
 function ProfileSidebar(propriedades) {
   return (
@@ -34,6 +36,7 @@ function ProfileSidebar(propriedades) {
 
 export default function Home() {
   const usuarioAleatorio = "gusdepaula";
+  const [userData, setUserData] = useState(undefined);
   const [comunidades, setComunidades] = React.useState([
     {
       id: "d8043eb624c0414fb4384ebc0cd9c07e",
@@ -56,17 +59,22 @@ export default function Home() {
   // const comunidades = comunidades[0];
   // const alteradorDeComunidades/setComunidades = comunidades[1];
 
-  console.log("Nosso teste");
-  // const comunidades = ["Alurakut"];
-  const pessoasFavoritas = [
-    "zelao",
-    "rodrigovallades",
-    "jonasschmedtmann",
-    "juunegreiros",
-    "omariosouto",
-    "peas",
-  ];
+  useEffect(() => {
+    fetch(`${URL_GITHUBAPI}/users/${usuarioAleatorio}`)
+      .then((res) => res.json())
+      .then((data) =>
+        setUserData((prevUserData) => ({ ...prevUserData, ...data }))
+      );
 
+    fetch(`${URL_GITHUBAPI}/users/${usuarioAleatorio}/following`)
+      .then((res) => res.json())
+      .then((data) =>
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          followingUsers: data,
+        }))
+      );
+  }, [usuarioAleatorio]);
   return (
     <>
       <AlurakutMenu githubUser={usuarioAleatorio} />
@@ -77,7 +85,7 @@ export default function Home() {
         </div>
         <div className="welcomeArea" style={{ gridArea: "welcomeArea" }}>
           <Box>
-            <h1 className="title">Bem vindo(a)</h1>
+            <h1 className="title">Bem-vindo, {userData && userData.name}</h1>
 
             <OrkutNostalgicIconSet />
           </Box>
@@ -142,20 +150,22 @@ export default function Home() {
           </ProfileRelationsBoxWrapper>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
-              Pessoas da comunidade ({pessoasFavoritas.length})
+              Pessoas da comunidade ({userData && userData.following})
             </h2>
 
             <ul>
-              {pessoasFavoritas.map((itemAtual) => {
-                return (
-                  <li key={itemAtual}>
-                    <a href={`/users/${itemAtual}`}>
-                      <img src={`https://github.com/${itemAtual}.png`} />
-                      <span>{itemAtual}</span>
+              {userData?.followingUsers &&
+                userData.followingUsers.slice(0, 6).map((user) => (
+                  <li key={user.login}>
+                    <a href={`/users/${user.login}`}>
+                      <img
+                        src={`https://www.github.com/${user.login}.png`}
+                        alt={user.login}
+                      />
+                      <span>{user.login}</span>
                     </a>
                   </li>
-                );
-              })}
+                ))}
             </ul>
           </ProfileRelationsBoxWrapper>
         </div>
