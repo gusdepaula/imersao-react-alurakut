@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import MainGrid from "../src/components/MainGrid";
 import Box from "../src/components/Box";
 import {
@@ -36,7 +36,7 @@ function ProfileSidebar(propriedades) {
 
 export default function Home() {
   const usuarioAleatorio = "gusdepaula";
-  const [userData, setUserData] = useState(undefined);
+
   const [comunidades, setComunidades] = React.useState([
     {
       id: "d8043eb624c0414fb4384ebc0cd9c07e",
@@ -59,12 +59,15 @@ export default function Home() {
   // const comunidades = comunidades[0];
   // const alteradorDeComunidades/setComunidades = comunidades[1];
 
-  useEffect(() => {
+  const [userData, setUserData] = React.useState([]);
+  React.useEffect(() => {
     fetch(`${URL_GITHUBAPI}/users/${usuarioAleatorio}`)
       .then((res) => res.json())
-      .then((data) =>
-        setUserData((prevUserData) => ({ ...prevUserData, ...data }))
-      );
+      .then((data) => {
+        console.log(data);
+        setUserData((prevUserData) => ({ ...prevUserData, ...data }));
+      })
+      .catch((erro) => console.error(erro));
 
     fetch(`${URL_GITHUBAPI}/users/${usuarioAleatorio}/following`)
       .then((res) => res.json())
@@ -73,8 +76,19 @@ export default function Home() {
           ...prevUserData,
           followingUsers: data,
         }))
-      );
-  }, [usuarioAleatorio]);
+      )
+      .catch((erro) => console.error(erro));
+
+    fetch(`${URL_GITHUBAPI}/users/${usuarioAleatorio}/followers`)
+      .then((res) => res.json())
+      .then((data) =>
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          followersUsers: data,
+        }))
+      )
+      .catch((erro) => console.error(erro));
+  }, []);
   return (
     <>
       <AlurakutMenu githubUser={usuarioAleatorio} />
@@ -134,6 +148,29 @@ export default function Home() {
           style={{ gridArea: "profileRelationsArea" }}
         >
           <ProfileRelationsBoxWrapper>
+            <h2 className="smallTitle">
+              Seguidores ({userData && userData.followers})
+            </h2>
+
+            <ul>
+              {userData?.followersUsers &&
+                userData.followersUsers.slice(0, 6).map((user) => (
+                  <li key={user.login}>
+                    <a
+                      href={`https://www.github.com/${user.login}`}
+                      target="_blank"
+                    >
+                      <img
+                        src={`https://www.github.com/${user.login}.png`}
+                        alt={user.login}
+                      />
+                      <span>{user.login}</span>
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </ProfileRelationsBoxWrapper>
+          <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">Comunidades ({comunidades.length})</h2>
             <ul>
               {comunidades.map((itemAtual) => {
@@ -150,14 +187,17 @@ export default function Home() {
           </ProfileRelationsBoxWrapper>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
-              Pessoas da comunidade ({userData && userData.following})
+              Seguindo ({userData && userData.following})
             </h2>
 
             <ul>
               {userData?.followingUsers &&
                 userData.followingUsers.slice(0, 6).map((user) => (
                   <li key={user.login}>
-                    <a href={`/users/${user.login}`}>
+                    <a
+                      href={`https://www.github.com/${user.login}`}
+                      target="_blank"
+                    >
                       <img
                         src={`https://www.github.com/${user.login}.png`}
                         alt={user.login}
