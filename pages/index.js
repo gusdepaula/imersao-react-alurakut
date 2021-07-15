@@ -37,25 +37,7 @@ function ProfileSidebar(propriedades) {
 export default function Home() {
   const usuarioAleatorio = "gusdepaula";
 
-  const [comunidades, setComunidades] = React.useState([
-    {
-      id: "d8043eb624c0414fb4384ebc0cd9c07e",
-      title: "Eu odeio acordar cedo",
-      image: "https://alurakut.vercel.app/capa-comunidade-01.jpg",
-    },
-    {
-      id: "398082ebb2634700a45ec8870ff946b9",
-      title: "Odeio esperar resposta no MSN",
-      image:
-        "https://img10.orkut.br.com/community/9197344aa3f8d682ece581e1146bec4a.jpg",
-    },
-    {
-      id: "6f9ac2b5451a45e888ef394d3486fbbb",
-      title: "Pareço metida(o) mas sou legal",
-      image:
-        "https://img10.orkut.br.com/community/43bf264aab209e4950ebf201789ed177.jpg",
-    },
-  ]);
+  const [comunidades, setComunidades] = React.useState([]);
   // const comunidades = comunidades[0];
   // const alteradorDeComunidades/setComunidades = comunidades[1];
 
@@ -88,6 +70,32 @@ export default function Home() {
         }))
       )
       .catch((erro) => console.error(erro));
+
+    // API GraphQL
+    fetch("https://graphql.datocms.com/", {
+      method: "POST",
+      headers: {
+        Authorization: "5f00c9765074431ca9b69d46509fe6",
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        query: `query {
+        allCommunities {
+          id
+          title
+          imageUrl
+          creatorSlug
+        }
+      }`,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const datoCMSCommunities = data.data.allCommunities;
+        console.log(datoCMSCommunities);
+        setComunidades(datoCMSCommunities);
+      });
   }, []);
   return (
     <>
@@ -115,12 +123,24 @@ export default function Home() {
                 console.log("Campo: ", dadosDoForm.get("image"));
 
                 const comunidade = {
-                  id: new Date().toISOString(),
                   title: dadosDoForm.get("title"),
-                  image: dadosDoForm.get("image"),
+                  imageUrl: dadosDoForm.get("image"),
+                  creatorSlug: usuarioAleatorio,
                 };
-                const comunidadesAtualizadas = [...comunidades, comunidade];
-                setComunidades(comunidadesAtualizadas);
+
+                fetch("/api/comunidades", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(comunidade),
+                }).then(async (response) => {
+                  const dados = await response.json();
+                  console.log(dados.registroCriado);
+                  const comunidade = dados.registroCriado;
+                  const comunidadesAtualizadas = [...comunidades, comunidade];
+                  setComunidades(comunidadesAtualizadas);
+                });
               }}
             >
               <div>
@@ -176,8 +196,8 @@ export default function Home() {
               {comunidades.map((itemAtual) => {
                 return (
                   <li key={itemAtual.id}>
-                    <a href={`/users/${itemAtual.title}`}>
-                      <img src={itemAtual.image} />
+                    <a href={`/communities/${itemAtual.id}`}>
+                      <img src={itemAtual.imageUrl} />
                       <span>{itemAtual.title}</span>
                     </a>
                   </li>
