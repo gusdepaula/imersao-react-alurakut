@@ -1,5 +1,6 @@
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { AlurakutStyles } from "../src/lib/AlurakutCommons";
+import Head from 'next/head'
 
 const GlobalStyle = createGlobalStyle`
   /* Reset CSS (Necolas Reset CSS <3) */
@@ -38,6 +39,26 @@ const theme = {
 export default function App({ Component, pageProps }) {
   return (
     <>
+      <Head>
+          {/* <!-- Primary Meta Tags --> */}
+          <title>Alurakut</title>
+          <meta name="title" content="Alurakut" />
+          <meta name="description" content="Projeto construido durante a terceira edição Imersão React da Alura!" />
+
+          {/* <!-- Open Graph / Facebook --> */}
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://alurakut-gusdepaula.vercel.app/" />
+          <meta property="og:title" content="Alurakut" />
+          <meta property="og:description" content="Projeto construido durante a terceira edição Imersão React da Alura!" />
+          <meta property="og:image" content="https://raw.githubusercontent.com/gusdepaula/imersao-react-alurakut/main/alurakut.png" />
+
+          {/* <!-- Twitter --> */}
+          <meta property="twitter:card" content="summary_large_image" />
+          <meta property="twitter:url" content="https://alurakut-gusdepaula.vercel.app/" />
+          <meta property="twitter:title" content="Alurakut" />
+          <meta property="twitter:description" content="Projeto construido durante a terceira edição Imersão React da Alura!" />
+          <meta property="twitter:image" content="https://raw.githubusercontent.com/gusdepaula/imersao-react-alurakut/main/alurakut.png" />
+      </Head>
       <GlobalStyle />
       <ThemeProvider theme={theme}>
         <Component {...pageProps} />
